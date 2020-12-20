@@ -1,7 +1,10 @@
 $(document).ready(function () {
+
   var currentDay = moment().format("MMM Do YY");
 
   function searchCities(inputCity) {
+
+    // var inputCity = $(this).attr("data-name"); 
     var queryURL =
       "https://api.openweathermap.org/data/2.5/weather?q=" +
       inputCity +
@@ -11,7 +14,7 @@ $(document).ready(function () {
       url: queryURL,
       method: "GET",
     }).then(function (response) {
-      console.log(response);
+      // console.log(response);
 
       var tempF = (response.main.temp - 273.15) * 1.8 + 32;
       $("#cities-temp-here").empty();
@@ -25,21 +28,22 @@ $(document).ready(function () {
         "Humidity: " + response.main.humidity + "%"
       );
 
-      $("#cities-temp-here").append(cityDiv, tempDiv, windDiv, humidDiv);
-
-      for (var i = 0; i < listOfCities.length; i++) {
-        var liButton = $("<button>");
-        liButton.addClass("list-group-item list-button");
-        liButton.text(listOfCities[i]);
-        $("#cities-appear-here").prepend(liButton);
-      }
+      $("#cities-temp-here").append(cityDiv, tempDiv, windDiv, humidDiv); 
       
+      // localStorage.setItem("cityName", JSON.stringify(cityDiv));
 
       
     });
   }
 
+
+  // function localStorageFunction(){
+  //   $("h2").value = JSON.parse(localStorage.getItem("cityName"));
+  // }
+
   function displayForecast(inputCity) {
+    
+    
     var queryURL =
       "https://api.openweathermap.org/data/2.5/forecast?q=" +
       inputCity +
@@ -47,15 +51,33 @@ $(document).ready(function () {
 
     $.ajax({
       url: queryURL,
+      dataType: "json",
       method: "GET",
-    }).then(function (response) {
-      
-      
-      $("#five-day").empty();
-      var fiveDay = $("<div>").text(JSON.stringify(response.list));
-      $("#five-day").append(fiveDay);
+      data: {
+        units: "standard",
+        cnt: "5"
+      },
+      success: function(data) {
+        console.log('Received data:', data) // For testing
+        var dayList = "";
+       
+        $.each(data.list, function(index, val) {
+          // var tempF = (response.main.temp - 273.15) * 1.8 + 32;
+          dayList += "<p>" // Opening paragraph tag
+          dayList += "<b>Day " + index + "</b>: " // Day
+          dayList += val.main.temp + "&degF" // Temperature
+          dayList += "<span> | " + val.weather[0].description + "</span>"; // Description
+          dayList += "<img src='https://openweathermap.org/img/w/" + val.weather[0].icon + ".png'>" // Icon
+          dayList += "</p>" // Closing paragraph tag
+        });
+        $("#five-day").html(dayList);
+      }
+  
+    
     });
   }
+
+  
 
 
   var listOfCities = [];
@@ -64,7 +86,20 @@ $(document).ready(function () {
     if (citiesFromStorage !== null) {
       listOfCities = citiesFromStorage;
     }
-    
+    renderButtons();
+  }
+
+  function renderButtons(){
+   
+    for (var i = 0; i < listOfCities.length; i++) {
+      var liButton = $("<button>");
+      liButton.addClass("list-group-item list-button col-12");
+      liButton.css("text-align", "left");
+      liButton.attr("data-name", listOfCities[i]);
+      liButton.text(listOfCities[i]);
+      $("#cities-appear-here").prepend(liButton);
+    }
+  
   }
 
 
@@ -81,19 +116,19 @@ $(document).ready(function () {
     console.log(listOfCities);
 
    
-   
+    renderButtons();
     displayForecast(inputCity);
     searchCities(inputCity);
   });
 
   
    
-
- 
+  // localStorageFunction();
+  init();
   
   $(document).on("click", ".list-button", displayForecast, searchCities);
 
-
+ 
 
 
 
