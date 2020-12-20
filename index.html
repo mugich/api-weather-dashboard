@@ -18,7 +18,7 @@
       <div class="row">
   
           <nav class="navbar navbar-light bg-dark col-12">
-            <span class="navbar-brand mb-0"><h1 class="h1">Weather Dashboard</h1> </span>
+            <span id="title">Weather Dashboard</span>
           </nav>
         
       </div>
@@ -29,30 +29,38 @@
         
 
             <div col-3>
+              <h4>Search for a City:</h4>
+
+
             <form class="form-inline md-form mr-auto mb-4" id="city-form">
+              
               <input class="form-control mr-sm-2" id="city-input" type="text" placeholder="Search" aria-label="Search">
-              <button type="search" class="btn btn-primary">Search</button>
+              <button type="search" class="btn btn-primary" >Search</button>
             </form>
             
-              <ul class="list-group" >
-                <li class="list-group-item" id="cities-appear-here"></li>
+              
+             <div id="cities-appear-here"></div>
              
-              </ul>
+            
            
            
           </div>        
 
           <div class="col-9">
-            <div class="row">
-              <div class="col-12 border">
-                <div id="cities-temp"></div>
+            <div class="row" >
+              <div class="col-12" id="border-appear" >
+
+                
+                  <div id="cities-temp-here"></div>
+                
 
               </div>
 
             </div>
             <div class="row">
               <div class="col-12">
-                <div id="5-day"></div>
+
+                <div id="five-day"></div>
 
               </div>
 

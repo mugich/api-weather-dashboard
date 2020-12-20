@@ -1,11 +1,19 @@
-.h1 {
+
+#title{
   text-align: center;
+  color: white;
+  font-size: 60px;
+  font-weight: bold;
 }
 
-.border {
-  border-bottom: solid;
-  border-top: solid;
-  border-left: solid;
-  border-right: solid;
+#city-form{
+  margin-top: 10px;
+ 
+}
+
+#cities-temp{
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 20px;
 
 }
