@@ -5,6 +5,10 @@
   font-size: 60px;
   font-weight: bold;
 }
+.navbar {
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
 
 #city-form{
   margin-top: 10px;

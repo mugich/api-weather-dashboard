@@ -29,6 +29,7 @@ $(document).ready(function () {
       );
 
       $("#cities-temp-here").append(cityDiv, tempDiv, windDiv, humidDiv); 
+      $("#cities-temp-here").addClass("list-group-item");
       
       // localStorage.setItem("cityName", JSON.stringify(cityDiv));
 
@@ -90,8 +91,10 @@ $(document).ready(function () {
   }
 
   function renderButtons(){
-   
+    
+    $("#cities-appear-here").empty();
     for (var i = 0; i < listOfCities.length; i++) {
+     
       var liButton = $("<button>");
       liButton.addClass("list-group-item list-button col-12");
       liButton.css("text-align", "left");
@@ -114,7 +117,7 @@ $(document).ready(function () {
     localStorage.setItem("listCity", JSON.stringify(listOfCities));
 
     console.log(listOfCities);
-
+    
    
     renderButtons();
     displayForecast(inputCity);
