@@ -46,6 +46,7 @@ $(document).ready(function () {
 
   // search and display 5 day forecast
   function displayForecast(inputCity) {
+    
     var queryURL =
       "https://api.openweathermap.org/data/2.5/forecast?q=" +
       encodeURIComponent(inputCity) +
@@ -68,13 +69,15 @@ $(document).ready(function () {
         for (var i = 5; i <= 40; i += 8) {
           var val = data.list[i];
           var tempF = (val.main.temp - 273.15) * 1.8 + 32;
-          var newDiv = $("<div>").addClass("back");
+          var newDiv = $("<div>").addClass("badge badge-primary");
           var hDiv = $("<b>").text(val.dt_txt);
+          // hDiv.addClass("back");
           var imgDiv = $(
             "<img src='https://openweathermap.org/img/w/" +
               val.weather[0].icon +
               ".png'>"
           );
+          
           var divTemp = $("<div>").text("Temp: " + tempF.toFixed(2) + " °F");
           var divHumid = $("<div>").text(
             "Humidity: " + val.main.humidity + "%"
@@ -88,46 +91,49 @@ $(document).ready(function () {
   }
    
   function init() {
+
     var citiesFromStorage = JSON.parse(localStorage.getItem("listCity"));
     if (citiesFromStorage !== null) {
       listOfCities = citiesFromStorage;
     }
     renderButtons();
   }
-    var listOfCities = [];
 
+    var listOfCities = [];
   // list of cities render buttons
   function renderButtons() {
+
     $("#cities-appear-here").empty();
     for (var i = 0; i < listOfCities.length; i++) {
       var liButton = $("<button>");
       liButton.addClass("list-group-item list-button col-12");
       liButton.css("text-align", "left");
-      liButton.attr("data-name", listOfCities[i]);
+      liButton.attr("data-name", listOfCities[i]);     
       liButton.text(listOfCities[i]);
       $("#cities-appear-here").prepend(liButton);
     }
   }
-   // search button event lister
+   // search button event listener
   $("#city-form").on("submit", function (event) {
+
     event.preventDefault();
-
     var inputCity = $("#city-input").val().trim();
-    if (!listOfCities.includes(inputCity)) listOfCities.push(inputCity);
 
+    if (!listOfCities.includes(inputCity)) 
+    listOfCities.push(inputCity);
     localStorage.setItem("listCity", JSON.stringify(listOfCities));
-
    // console.log(listOfCities);
     $("#city-input").val("");
     renderButtons();
     displayForecast(inputCity);
     searchCities(inputCity);
+
   });
 
  
   init();
 
-  $(document).on("click", ".list-button", function (e) {
+  $(document).on("click", ".list-button", function () {
     var inputCity = $(this).data("name");
     displayForecast(inputCity);
     searchCities(inputCity);
