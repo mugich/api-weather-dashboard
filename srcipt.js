@@ -1,10 +1,8 @@
 $(document).ready(function () {
-
   var currentDay = moment().format("MMM Do YY");
 
+  // search for current day weather
   function searchCities(inputCity) {
-
-    // var inputCity = $(this).attr("data-name"); 
     var queryURL =
       "https://api.openweathermap.org/data/2.5/weather?q=" +
       inputCity +
@@ -14,40 +12,43 @@ $(document).ready(function () {
       url: queryURL,
       method: "GET",
     }).then(function (response) {
-      // console.log(response);
-
+      console.log(response);
       var tempF = (response.main.temp - 273.15) * 1.8 + 32;
+
       $("#cities-temp-here").empty();
 
       var cityDiv = $("<h2>").text(response.name + " " + currentDay);
-      var tempDiv = $("<div>").text("Temperature: " + tempF.toFixed(2) + " °F");
+      var img = $(
+        "<img src='https://openweathermap.org/img/w/" +
+          response.weather[0].icon +
+          ".png'>"
+      );
+      cityDiv.append(img);
+      var tempDiv = $("<div>").text("Temp: " + tempF.toFixed(2) + " °F");
       var windDiv = $("<div>").text(
-        "wind Speed: " + response.wind.speed + " MPH"
+        "Wind Speed: " + response.wind.speed + " MPH"
       );
       var humidDiv = $("<div>").text(
         "Humidity: " + response.main.humidity + "%"
       );
+      // var uvIndex = $("<div>").text("UV index: " + response.data);
 
-      $("#cities-temp-here").append(cityDiv, tempDiv, windDiv, humidDiv); 
+      $("#cities-temp-here").append(cityDiv, tempDiv, windDiv, humidDiv);
       $("#cities-temp-here").addClass("list-group-item");
-      
-      // localStorage.setItem("cityName", JSON.stringify(cityDiv));
 
-      
+      // localStorage.setItem("cityName", JSON.stringify(cityDiv));
     });
   }
-
 
   // function localStorageFunction(){
   //   $("h2").value = JSON.parse(localStorage.getItem("cityName"));
   // }
 
+  // search and display 5 day forecast
   function displayForecast(inputCity) {
-    
-    
     var queryURL =
       "https://api.openweathermap.org/data/2.5/forecast?q=" +
-      inputCity +
+      encodeURIComponent(inputCity) +
       "&appid=464a210216369d6d7feb73c26252e030";
 
     $.ajax({
@@ -56,32 +57,36 @@ $(document).ready(function () {
       method: "GET",
       data: {
         units: "standard",
-        cnt: "5"
       },
-      success: function(data) {
-        console.log('Received data:', data) // For testing
-        var dayList = "";
-       
-        $.each(data.list, function(index, val) {
-          // var tempF = (response.main.temp - 273.15) * 1.8 + 32;
-          dayList += "<p>" // Opening paragraph tag
-          dayList += "<b>Day " + index + "</b>: " // Day
-          dayList += val.main.temp + "&degF" // Temperature
-          dayList += "<span> | " + val.weather[0].description + "</span>"; // Description
-          dayList += "<img src='https://openweathermap.org/img/w/" + val.weather[0].icon + ".png'>" // Icon
-          dayList += "</p>" // Closing paragraph tag
-        });
-        $("#five-day").html(dayList);
-      }
-  
-    
+      success: function (data) {
+        console.log("Received data:", data); // For testing
+        $("#five-day").empty();
+        $("#h2-here").empty();
+        var h2Div = $("<h2>").text("5-Day Forecast:");
+        h2Div.addClass("h2-style");
+        $("#h2-here").append(h2Div);
+        for (var i = 5; i <= 40; i += 8) {
+          var val = data.list[i];
+          var tempF = (val.main.temp - 273.15) * 1.8 + 32;
+          var newDiv = $("<div>").addClass("back");
+          var hDiv = $("<b>").text(val.dt_txt);
+          var imgDiv = $(
+            "<img src='https://openweathermap.org/img/w/" +
+              val.weather[0].icon +
+              ".png'>"
+          );
+          var divTemp = $("<div>").text("Temp: " + tempF.toFixed(2) + " °F");
+          var divHumid = $("<div>").text(
+            "Humidity: " + val.main.humidity + "%"
+          );
+          newDiv.append(hDiv, imgDiv, divTemp, divHumid);
+          $("#five-day").append(newDiv);
+          $("#five-day").addClass("list-group list-group-horizontal");
+        }
+      },
     });
   }
-
-  
-
-
-  var listOfCities = [];
+   
   function init() {
     var citiesFromStorage = JSON.parse(localStorage.getItem("listCity"));
     if (citiesFromStorage !== null) {
@@ -89,12 +94,12 @@ $(document).ready(function () {
     }
     renderButtons();
   }
+    var listOfCities = [];
 
-  function renderButtons(){
-    
+  // list of cities render buttons
+  function renderButtons() {
     $("#cities-appear-here").empty();
     for (var i = 0; i < listOfCities.length; i++) {
-     
       var liButton = $("<button>");
       liButton.addClass("list-group-item list-button col-12");
       liButton.css("text-align", "left");
@@ -102,44 +107,29 @@ $(document).ready(function () {
       liButton.text(listOfCities[i]);
       $("#cities-appear-here").prepend(liButton);
     }
-  
   }
-
-
-
+   // search button event lister
   $("#city-form").on("submit", function (event) {
-
     event.preventDefault();
 
     var inputCity = $("#city-input").val().trim();
+    if (!listOfCities.includes(inputCity)) listOfCities.push(inputCity);
 
-    listOfCities.push(inputCity);
     localStorage.setItem("listCity", JSON.stringify(listOfCities));
 
-    console.log(listOfCities);
-    
-   
+   // console.log(listOfCities);
+    $("#city-input").val("");
     renderButtons();
     displayForecast(inputCity);
     searchCities(inputCity);
   });
 
-  
-   
-  // localStorageFunction();
+ 
   init();
-  
-  $(document).on("click", ".list-button", displayForecast, searchCities);
 
- 
-
-
-
- 
-
- 
-
- 
-
-
+  $(document).on("click", ".list-button", function (e) {
+    var inputCity = $(this).data("name");
+    displayForecast(inputCity);
+    searchCities(inputCity);
+  });
 });

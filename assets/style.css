@@ -1,14 +1,18 @@
 
 #title{
-  padding-left: 7cm;
+  /* padding-left: 17cm; */
   color: white;
   font-size: 60px;
   font-weight: bold;
+  text-align: center;
+  
 }
 .navbar {
   padding-bottom: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 20px; 
+  justify-content: center;
 }
+
 
 #city-form{
   margin-top: 10px;
@@ -20,4 +24,17 @@
   margin-bottom: 20px;
   margin-left: 20px;
 
+}
+.main-row {
+  margin-left: 20px;
+}
+.back{
+  background-color: dodgerblue;
+  color: white;
+}
+.back img {
+  display: inline-block;
+}
+.h2-style {
+  margin-top: 20px;
 }
